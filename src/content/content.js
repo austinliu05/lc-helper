@@ -58,7 +58,7 @@ class LeetCodeAnalyzer {
   }
 
   init() {
-    // Listen for messages from popup
+    // Listen for messages from popup and background
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.action === 'toggleAnalysis') {
         this.isEnabled = request.enabled;
@@ -66,6 +66,21 @@ class LeetCodeAnalyzer {
           this.analyzePage();
         } else {
           this.removeHighlights();
+        }
+        sendResponse({success: true});
+      } else if (request.action === 'refreshAnalysis') {
+        this.removeHighlights();
+        if (this.isEnabled) {
+          this.analyzePage();
+        }
+        sendResponse({success: true});
+      } else if (request.action === 'clearHighlights') {
+        this.removeHighlights();
+        sendResponse({success: true});
+      } else if (request.action === 'pageLoaded') {
+        // Page has loaded, re-analyze if enabled
+        if (this.isEnabled) {
+          setTimeout(() => this.analyzePage(), 500);
         }
         sendResponse({success: true});
       }
@@ -114,33 +129,90 @@ class LeetCodeAnalyzer {
   }
 
   highlightKeywords(container) {
+    // Get all text nodes that haven't been processed yet
     const textNodes = this.getTextNodes(container);
     
     textNodes.forEach(node => {
       const text = node.textContent;
-      let highlightedText = text;
+      if (!text.trim()) return; // Skip empty text nodes
       
-      // Check each topic for keywords
+      // Create a document fragment to build the highlighted content
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let hasHighlights = false;
+      
+      // Find all keyword matches and sort them by position
+      const matches = [];
       Object.entries(this.topics).forEach(([topic, config]) => {
         config.keywords.forEach(keyword => {
           const regex = new RegExp(`\\b${this.escapeRegex(keyword)}\\b`, 'gi');
-          highlightedText = highlightedText.replace(regex, (match) => {
-            return `<span class="lc-highlight lc-${topic.toLowerCase().replace(/\s+/g, '-')}" 
-                     data-topic="${topic}" 
-                     style="background-color: ${config.color}; 
-                            color: white; 
-                            padding: 2px 4px; 
-                            border-radius: 3px; 
-                            margin: 0 1px;
-                            cursor: pointer;"
-                     title="Topic: ${topic}">${match}</span>`;
-          });
+          let match;
+          while ((match = regex.exec(text)) !== null) {
+            matches.push({
+              start: match.index,
+              end: match.index + match[0].length,
+              text: match[0],
+              topic: topic,
+              config: config
+            });
+          }
         });
       });
       
-      if (highlightedText !== text) {
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = highlightedText;
+      // Sort matches by start position
+      matches.sort((a, b) => a.start - b.start);
+      
+      // Remove overlapping matches (keep the first one)
+      const filteredMatches = [];
+      for (let i = 0; i < matches.length; i++) {
+        const current = matches[i];
+        const overlapping = filteredMatches.find(m => 
+          (current.start >= m.start && current.start < m.end) ||
+          (current.end > m.start && current.end <= m.end)
+        );
+        if (!overlapping) {
+          filteredMatches.push(current);
+        }
+      }
+      
+      // Build the highlighted content
+      filteredMatches.forEach(match => {
+        // Add text before the match
+        if (match.start > lastIndex) {
+          const textBefore = text.substring(lastIndex, match.start);
+          fragment.appendChild(document.createTextNode(textBefore));
+        }
+        
+        // Create highlighted span
+        const span = document.createElement('span');
+        span.className = `lc-highlight lc-${match.topic.toLowerCase().replace(/\s+/g, '-')}`;
+        span.setAttribute('data-topic', match.topic);
+        span.style.cssText = `
+          background-color: ${match.config.color}; 
+          color: white; 
+          padding: 2px 4px; 
+          border-radius: 3px; 
+          margin: 0 1px;
+          cursor: pointer;
+        `;
+        span.title = `Topic: ${match.topic}`;
+        span.textContent = match.text;
+        
+        fragment.appendChild(span);
+        hasHighlights = true;
+        lastIndex = match.end;
+      });
+      
+      // Add remaining text
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      }
+      
+      // Replace the text node with the highlighted content
+      if (hasHighlights) {
+        const wrapper = document.createElement('span');
+        wrapper.className = 'lc-highlighted-container';
+        wrapper.appendChild(fragment);
         node.parentNode.replaceChild(wrapper, node);
         this.highlightedElements.add(wrapper);
       }
@@ -159,7 +231,10 @@ class LeetCodeAnalyzer {
           if (parent && (
             parent.tagName === 'SCRIPT' || 
             parent.tagName === 'STYLE' || 
-            parent.classList.contains('lc-highlight')
+            parent.tagName === 'NOSCRIPT' ||
+            parent.classList.contains('lc-highlight') ||
+            parent.classList.contains('lc-highlighted-container') ||
+            parent.closest('.lc-highlighted-container')
           )) {
             return NodeFilter.FILTER_REJECT;
           }
@@ -181,8 +256,11 @@ class LeetCodeAnalyzer {
   removeHighlights() {
     this.highlightedElements.forEach(element => {
       if (element.parentNode) {
-        const textContent = element.textContent;
+        // Get the text content without any HTML markup
+        const textContent = element.textContent || element.innerText;
         const textNode = document.createTextNode(textContent);
+        
+        // Replace the highlighted element with the original text
         element.parentNode.replaceChild(textNode, element);
       }
     });

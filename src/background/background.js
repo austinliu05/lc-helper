@@ -12,7 +12,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     
     // Open welcome page
     chrome.tabs.create({
-      url: chrome.runtime.getURL('welcome.html')
+      url: chrome.runtime.getURL('src/welcome.html')
     });
   } else if (details.reason === 'update') {
     // Handle updates
@@ -37,26 +37,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// Handle tab updates to inject content script if needed
+// Handle tab updates to notify content script
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url && tab.url.includes('leetcode.com')) {
-    // Check if content script is already injected
-    chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      func: () => {
-        return window.leetCodeAnalyzer !== undefined;
-      }
-    }).then((results) => {
-      if (results[0] && !results[0].result) {
-        // Content script not injected, inject it
-        chrome.scripting.executeScript({
-          target: { tabId: tabId },
-          files: ['content.js']
-        });
-      }
-    }).catch((error) => {
-      console.error('Error checking content script:', error);
-    });
+    // Notify content script that page has loaded
+    setTimeout(() => {
+      chrome.tabs.sendMessage(tabId, { action: 'pageLoaded' }).catch(() => {
+        // Content script not ready yet, that's okay
+      });
+    }, 1000);
   }
 });
 

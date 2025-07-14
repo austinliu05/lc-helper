@@ -1,4 +1,4 @@
-# LeetCode Topic Analyzer
+# LeetCode Topic Analyzer (Beta)
 
 A Chrome extension that intelligently analyzes LeetCode problems and highlights keywords that reveal the underlying algorithm or data structure being tested. This tool helps you quickly identify problem-solving patterns and improve your algorithmic thinking.
 
