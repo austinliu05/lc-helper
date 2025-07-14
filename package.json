@@ -1,0 +1,35 @@
+{
+  "name": "leetcode-topic-analyzer",
+  "version": "1.0.0",
+  "description": "A Chrome extension that analyzes LeetCode problems and highlights keywords that reveal the topic being tested",
+  "main": "manifest.json",
+  "scripts": {
+    "build": "echo 'No build process needed for Chrome extension'",
+    "dev": "echo 'Load extension in Chrome with developer mode'",
+    "test": "echo 'Test on LeetCode.com'",
+    "lint": "echo 'Add ESLint configuration if needed'"
+  },
+  "keywords": [
+    "chrome-extension",
+    "leetcode",
+    "algorithms",
+    "data-structures",
+    "coding",
+    "education"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/leetcode-topic-analyzer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/leetcode-topic-analyzer/issues"
+  },
+  "homepage": "https://github.com/yourusername/leetcode-topic-analyzer#readme",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 

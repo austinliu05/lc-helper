@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode Topic Analyzer",
+  "version": "1.0.0",
+  "description": "Analyzes LeetCode problems and highlights keywords that reveal the topic being tested",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://*.leetcode.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*", "https://*.leetcode.com/*"],
+      "js": ["src/content/content.js"],
+      "css": ["src/styles/styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "LeetCode Topic Analyzer"
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/icons/*"],
+      "matches": ["https://leetcode.com/*", "https://*.leetcode.com/*"]
+    }
+  ],
+  "commands": {
+    "toggle-analysis": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description": "Toggle LeetCode analysis"
+    },
+    "refresh-analysis": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R"
+      },
+      "description": "Refresh LeetCode analysis"
+    },
+    "clear-highlights": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Clear all highlights"
+    }
+  }
+} 

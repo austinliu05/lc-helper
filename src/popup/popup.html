@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetCode Topic Analyzer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>LeetCode Topic Analyzer</h1>
+      <p>Highlight keywords to identify problem topics</p>
+    </header>
+    
+    <div class="controls">
+      <div class="toggle-section">
+        <label class="toggle-label">
+          <input type="checkbox" id="analysisToggle" checked>
+          <span class="toggle-slider"></span>
+          <span class="toggle-text">Enable Analysis</span>
+        </label>
+      </div>
+      
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Topics Found:</span>
+          <span class="stat-value" id="topicsFound">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Keywords Highlighted:</span>
+          <span class="stat-value" id="keywordsFound">0</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topics-section">
+      <h3>Topic Legend</h3>
+      <div class="topics-grid" id="topicsGrid">
+        <!-- Topics will be populated by JavaScript -->
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Settings</h3>
+      <div class="setting-item">
+        <label for="autoAnalyze">Auto-analyze on page load</label>
+        <input type="checkbox" id="autoAnalyze" checked>
+      </div>
+      <div class="setting-item">
+        <label for="highlightOpacity">Highlight opacity</label>
+        <input type="range" id="highlightOpacity" min="0.3" max="1" step="0.1" value="0.8">
+        <span id="opacityValue">80%</span>
+      </div>
+    </div>
+    
+    <footer>
+      <button id="refreshBtn" class="btn btn-secondary">Refresh Analysis</button>
+      <button id="clearBtn" class="btn btn-danger">Clear Highlights</button>
+    </footer>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 

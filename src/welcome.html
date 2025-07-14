@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to LeetCode Topic Analyzer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .welcome-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 40px 30px;
+    }
+    
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 25px;
+    }
+    
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+    
+    .feature-icon::before {
+      content: '✨';
+      font-size: 20px;
+    }
+    
+    .feature-content h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    
+    .feature-content p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    .topics-preview {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 30px 0;
+    }
+    
+    .topics-preview h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+    }
+    
+    .topic-preview {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: white;
+      text-align: center;
+    }
+    
+    .footer {
+      background: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .version {
+      font-size: 12px;
+      color: #999;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome-container">
+    <div class="header">
+      <h1>Welcome to LeetCode Topic Analyzer!</h1>
+      <p>Your intelligent companion for identifying problem-solving patterns</p>
+    </div>
+    
+    <div class="content">
+      <div class="feature">
+        <div class="feature-icon"></div>
+        <div class="feature-content">
+          <h3>Smart Keyword Detection</h3>
+          <p>Automatically identifies and highlights keywords that reveal the underlying algorithm or data structure being tested.</p>
+        </div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon"></div>
+        <div class="feature-content">
+          <h3>Topic Classification</h3>
+          <p>Categorizes problems into 12 major topics including Arrays, Trees, Dynamic Programming, and more.</p>
+        </div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon"></div>
+        <div class="feature-content">
+          <h3>Customizable Experience</h3>
+          <p>Toggle specific topics, adjust highlight opacity, and personalize your analysis preferences.</p>
+        </div>
+      </div>
+      
+      <div class="topics-preview">
+        <h3>Supported Topics</h3>
+        <div class="topics-grid">
+          <div class="topic-preview" style="background: #FF6B6B;">Arrays & Strings</div>
+          <div class="topic-preview" style="background: #4ECDC4;">Linked Lists</div>
+          <div class="topic-preview" style="background: #45B7D1;">Trees & Graphs</div>
+          <div class="topic-preview" style="background: #96CEB4;">Dynamic Programming</div>
+          <div class="topic-preview" style="background: #FFEAA7; color: #333;">Two Pointers</div>
+          <div class="topic-preview" style="background: #DDA0DD;">Sliding Window</div>
+          <div class="topic-preview" style="background: #98D8C8;">Binary Search</div>
+          <div class="topic-preview" style="background: #F7DC6F; color: #333;">Stack & Queue</div>
+          <div class="topic-preview" style="background: #BB8FCE;">Hash Table</div>
+          <div class="topic-preview" style="background: #F8C471; color: #333;">Greedy</div>
+          <div class="topic-preview" style="background: #E74C3C;">Backtracking</div>
+          <div class="topic-preview" style="background: #9B59B6;">Bit Manipulation</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <a href="https://leetcode.com" class="btn" target="_blank">Start Analyzing Problems</a>
+      <div class="version">Version 1.0.0</div>
+    </div>
+  </div>
+</body>
+</html> 
