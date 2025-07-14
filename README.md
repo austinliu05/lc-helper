@@ -2,6 +2,10 @@
 
 A Chrome extension that intelligently analyzes LeetCode problems and highlights keywords that reveal the underlying algorithm or data structure being tested. This tool helps you quickly identify problem-solving patterns and improve your algorithmic thinking.
 
+Currently building a ML model to analyze problem descriptions and highlight keywords that help identify the topic of the problem instead of having a hardcoded dictionary (current implementation).
+
+[Dataset](https://huggingface.co/datasets/kaysss/leetcode-problem-set?utm_source=chatgpt.com) and [Kaggle](https://www.kaggle.com/code/apoxieforest/lc-topic-identifier/edit)
+
 ## Features
 
 ### Smart Keyword Detection
