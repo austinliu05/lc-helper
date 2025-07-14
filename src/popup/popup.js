@@ -78,13 +78,29 @@ class PopupController {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
-      if (tab.url.includes('leetcode.com')) {
-        await chrome.tabs.sendMessage(tab.id, {
-          action: 'toggleAnalysis',
-          enabled: enabled
-        });
-        
-        this.saveSetting('analysisEnabled', enabled);
+      if (tab.url && tab.url.includes('leetcode.com')) {
+        try {
+          await chrome.tabs.sendMessage(tab.id, {
+            action: 'toggleAnalysis',
+            enabled: enabled
+          });
+          
+          this.saveSetting('analysisEnabled', enabled);
+        } catch (contentScriptError) {
+          // Content script not ready, inject it first
+          await this.injectContentScript(tab.id);
+          setTimeout(async () => {
+            try {
+              await chrome.tabs.sendMessage(tab.id, {
+                action: 'toggleAnalysis',
+                enabled: enabled
+              });
+              this.saveSetting('analysisEnabled', enabled);
+            } catch (retryError) {
+              this.showError('Failed to toggle analysis. Please refresh the page.');
+            }
+          }, 500);
+        }
       } else {
         this.showError('Please navigate to a LeetCode problem page');
       }
@@ -114,9 +130,14 @@ class PopupController {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
-      if (tab.url.includes('leetcode.com')) {
-        await chrome.tabs.sendMessage(tab.id, { action: 'clearHighlights' });
-        await this.updateStats();
+      if (tab.url && tab.url.includes('leetcode.com')) {
+        try {
+          await chrome.tabs.sendMessage(tab.id, { action: 'clearHighlights' });
+          await this.updateStats();
+        } catch (contentScriptError) {
+          console.log('Content script not ready');
+          this.showError('Please refresh the page and try again');
+        }
       } else {
         this.showError('Please navigate to a LeetCode problem page');
       }
@@ -130,21 +151,39 @@ class PopupController {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
-      if (tab.url.includes('leetcode.com')) {
-        const response = await chrome.tabs.sendMessage(tab.id, { action: 'getStats' });
-        
-        if (response && response.success) {
-          document.getElementById('topicsFound').textContent = response.topicsFound || 0;
-          document.getElementById('keywordsFound').textContent = response.keywordsFound || 0;
+      if (tab.url && tab.url.includes('leetcode.com')) {
+        try {
+          const response = await chrome.tabs.sendMessage(tab.id, { action: 'getStats' });
+          
+          if (response && response.success) {
+            document.getElementById('topicsFound').textContent = response.topicsFound || 0;
+            document.getElementById('keywordsFound').textContent = response.keywordsFound || 0;
+            
+            // Update found topics section
+            this.updateFoundTopics(response.topics || []);
+          } else {
+            // Content script responded but no stats available
+            document.getElementById('topicsFound').textContent = '0';
+            document.getElementById('keywordsFound').textContent = '0';
+            this.updateFoundTopics([]);
+          }
+        } catch (contentScriptError) {
+          // Content script not ready - this is normal, just show 0 stats
+          console.log('Content script not ready yet');
+          document.getElementById('topicsFound').textContent = '0';
+          document.getElementById('keywordsFound').textContent = '0';
+          this.updateFoundTopics([]);
         }
       } else {
         document.getElementById('topicsFound').textContent = '0';
         document.getElementById('keywordsFound').textContent = '0';
+        this.updateFoundTopics([]);
       }
     } catch (error) {
       console.error('Error updating stats:', error);
       document.getElementById('topicsFound').textContent = '0';
       document.getElementById('keywordsFound').textContent = '0';
+      this.updateFoundTopics([]);
     }
   }
 
@@ -152,14 +191,50 @@ class PopupController {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
-      if (tab.url.includes('leetcode.com')) {
-        await chrome.tabs.sendMessage(tab.id, {
-          action: 'updateOpacity',
-          opacity: opacity
-        });
+      if (tab.url && tab.url.includes('leetcode.com')) {
+        try {
+          await chrome.tabs.sendMessage(tab.id, {
+            action: 'updateOpacity',
+            opacity: opacity
+          });
+        } catch (contentScriptError) {
+          console.log('Content script not ready for opacity update');
+        }
       }
     } catch (error) {
       console.error('Error updating opacity:', error);
+    }
+  }
+
+  updateFoundTopics(foundTopics) {
+    const section = document.getElementById('foundTopicsSection');
+    const list = document.getElementById('foundTopicsList');
+    
+    if (foundTopics.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+    
+    section.style.display = 'block';
+    list.innerHTML = '';
+    
+    foundTopics.forEach(topic => {
+      const topicItem = document.createElement('div');
+      topicItem.className = 'found-topic-item';
+      topicItem.style.backgroundColor = this.topics[topic]?.color || '#ccc';
+      topicItem.textContent = topic;
+      list.appendChild(topicItem);
+    });
+  }
+
+  async injectContentScript(tabId) {
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ['src/content/content.js']
+      });
+    } catch (error) {
+      console.log('Content script injection failed:', error);
     }
   }
 
@@ -184,12 +259,16 @@ class PopupController {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
-      if (tab.url.includes('leetcode.com')) {
-        await chrome.tabs.sendMessage(tab.id, {
-          action: 'toggleTopic',
-          topic: topicName,
-          enabled: isActive
-        });
+      if (tab.url && tab.url.includes('leetcode.com')) {
+        try {
+          await chrome.tabs.sendMessage(tab.id, {
+            action: 'toggleTopic',
+            topic: topicName,
+            enabled: isActive
+          });
+        } catch (contentScriptError) {
+          console.log('Content script not ready for topic toggle');
+        }
       }
     } catch (error) {
       console.error('Error updating topic visibility:', error);

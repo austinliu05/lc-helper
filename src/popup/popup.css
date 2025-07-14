@@ -133,6 +133,7 @@ header p {
   gap: 8px;
   max-height: 200px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .topic-item {
@@ -145,6 +146,11 @@ header p {
   color: white;
   cursor: pointer;
   transition: transform 0.2s;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+  text-align: center;
+  justify-content: center;
 }
 
 .topic-item:hover {
@@ -154,6 +160,35 @@ header p {
 .topic-item.inactive {
   opacity: 0.5;
   filter: grayscale(1);
+}
+
+.found-topics-section {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.found-topics-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.found-topics-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.found-topic-item {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  min-width: 60px;
 }
 
 .settings-section {
