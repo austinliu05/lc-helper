@@ -143,7 +143,7 @@ If you encounter any issues or have suggestions:
 
 ## Changelog
 
-### Version 1.0.0
+### Version 1.0.4
 - Initial release
 - 12 topic categories with keyword detection
 - Popup interface with controls
