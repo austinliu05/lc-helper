@@ -246,7 +246,8 @@ class PopupController {
     this.saveTopicPreference(topicName, isActive);
     
     // Update content script
-    this.updateTopicVisibility(topicName, isActive);
+    const normalizedTopic = topicName.toLowerCase().replace(/\s+/g, '-');
+    this.updateTopicVisibility(normalizedTopic, isActive);
   }
 
   async saveTopicPreference(topicName, isActive) {

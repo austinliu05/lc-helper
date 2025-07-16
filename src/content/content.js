@@ -128,7 +128,9 @@ class LeetCodeAnalyzer {
     });
 
     // Initial analysis
-    this.analyzePage();
+    if (this.isEnabled) {
+      this.analyzePage();
+    }
     
     // Watch for dynamic content changes
     this.observePageChanges();
@@ -274,7 +276,7 @@ class LeetCodeAnalyzer {
         
         // Create highlighted span
         const span = document.createElement('span');
-        span.className = `lc-highlight lc-${match.topic.toLowerCase().replace(/\s+/g, '-')}`;
+        span.className = `lc-highlight ${normalizeTopicClass(match.topic)}`;
         span.setAttribute('data-topic', match.topic);
         span.style.cssText = `
           background-color: ${match.config.color}; 
@@ -423,10 +425,9 @@ class LeetCodeAnalyzer {
   }
 
   toggleTopic(topicName, enabled) {
-    // Show/hide highlights for a specific topic
-    const topicClass = `lc-${topicName.toLowerCase().replace(/\s+/g, '-')}`;
+    // Normalize topic name to match class naming (remove punctuation)
+    const topicClass = normalizeTopicClass(topicName);
     const highlights = document.querySelectorAll(`.${topicClass}`);
-    
     highlights.forEach(highlight => {
       if (enabled) {
         highlight.style.display = 'inline';
@@ -438,9 +439,14 @@ class LeetCodeAnalyzer {
 
   async loadSettings() {
     try {
-      const result = await chrome.storage.sync.get(['highlightOpacity']);
+      const result = await chrome.storage.sync.get(['highlightOpacity', 'analysisEnabled']);
       if (result.highlightOpacity !== undefined) {
         this.highlightOpacity = result.highlightOpacity;
+      }
+      if (result.analysisEnabled !== undefined) {
+        this.isEnabled = result.analysisEnabled;
+      } else {
+        this.isEnabled = true; // default to true if not set
       }
     } catch (error) {
       console.log('Error loading settings:', error);
@@ -462,6 +468,11 @@ class LeetCodeAnalyzer {
 
 
 
+}
+
+// Utility to normalize topic names for class names
+function normalizeTopicClass(topicName) {
+  return `lc-${topicName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`;
 }
 
 // Initialize the analyzer when the page loads
